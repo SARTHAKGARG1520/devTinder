@@ -1,8 +1,17 @@
 const express = require("express");
 const app = express();
 
-app.get("/user/:userId/:password", (req,res) =>{
-    res.send(req.params);
+
+app.use("/user", (req,res,next) =>{
+    res.send('Response 1');
+    next();
+},
+(req,res,next) =>{
+    res.send('Response 2');
+    next();
+},
+(req,res) =>{
+    res.send('Response 3');
 });
 
 app.listen((3000), () => {
