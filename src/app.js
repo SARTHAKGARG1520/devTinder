@@ -3,23 +3,19 @@ const app = express();
 
 const { userAuth, adminAuth } = require("./middlewares/auth.js")
 
-app.use("/user", userAuth);
-
-// app.use("/admin", adminAuth)
 
 
-app.get("/user/getData", (req, res, next) => {
-    res.send('All data sent');
+app.get("/user", (req, res) => {
+    // res.send('All data sent');
+        throw new Error('nvdsjbvksd');
+        res.send('sent');
 });
 
-app.get("/admin/getData", adminAuth, (req, res, next) => {
-    res.send("admin data sent");
+app.use("/",(err,req,res,next) =>{
+    if(err){
+        res.status(500).send('Something went wrong')
+    }
 });
-
-app.get("/login", (req, res) => {
-    res.send('logged in successfully');
-})
-
 app.listen((3000), () => {
     console.log('Server started');
 });
