@@ -4,13 +4,48 @@ const connectDB = require('./config/database');
 const User = require('./models/user')
 
 app.use(express.json());
+
+app.get('/users', async (req, res) => {
+    // const userEmail = req.body.emailId;
+    try {
+        const users = await User.find({});
+        if (users.length === 0) {
+            res.status(404).send('Not found');
+        }
+        else {
+            res.send(users);
+        }
+    }
+    catch (err) {
+        res.status(500).send('server error');
+    }
+
+});
+
+app.get('/userByEmail', async (req, res) => {
+    const userEmail = req.body.emailId;
+    try {
+        const user = await User.findOne({ emailId: userEmail });
+        if (!user) {
+            res.status(404).send('Not found');
+        }
+        else {
+            res.send(user);
+        }
+    }
+    catch (err) {
+        res.status(500).send('server error');
+    }
+
+});
+
 app.post('/signup', async (req, res) => {
     const data = new User(req.body);
-    try{
+    try {
         await data.save();
         res.send('Data inserted');
     }
-    catch(err){
+    catch (err) {
         res.status(400).send('Error saving the user ' + err.message);
     }
 });
