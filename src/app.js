@@ -1,12 +1,11 @@
 const express = require("express");
 const app = express();
 const connectDB = require('./config/database');
-const User = require('./models/user')
+const User = require('./models/user');
 
 app.use(express.json());
 
 app.get('/users', async (req, res) => {
-    // const userEmail = req.body.emailId;
     try {
         const users = await User.find({});
         if (users.length === 0) {
@@ -17,7 +16,18 @@ app.get('/users', async (req, res) => {
         }
     }
     catch (err) {
-        res.status(500).send('server error');
+        res.status(500).send('Server error');
+    }
+});
+
+app.delete('/user',async (req,res) =>{
+    const id = req.body.id;
+    try{
+        await User.findOneAndDelete({_id: id}) ;
+        res.send('Deleted successfully');
+    }
+    catch(err){
+        res.status(500).send('unable to delete');
     }
 
 });
