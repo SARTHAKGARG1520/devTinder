@@ -20,13 +20,13 @@ app.get('/users', async (req, res) => {
     }
 });
 
-app.delete('/user',async (req,res) =>{
+app.delete('/user', async (req, res) => {
     const id = req.body.id;
-    try{
-        await User.findOneAndDelete({_id: id}) ;
+    try {
+        await User.findOneAndDelete({ _id: id });
         res.send('Deleted successfully');
     }
-    catch(err){
+    catch (err) {
         res.status(500).send('unable to delete');
     }
 
@@ -46,7 +46,6 @@ app.get('/userByEmail', async (req, res) => {
     catch (err) {
         res.status(500).send('server error');
     }
-
 });
 
 app.post('/signup', async (req, res) => {
@@ -58,6 +57,24 @@ app.post('/signup', async (req, res) => {
     catch (err) {
         res.status(400).send('Error saving the user ' + err.message);
     }
+});
+
+app.patch('/user', async (req, res) => {
+    const data = req.body;
+    const id = data.userId;
+    try {
+        const user = await User.findOneAndUpdate({ _id: id }, data, {
+            returnDocument: "after",
+            runValidators: true
+        });
+        console.log(user);
+        res.send('Data updated');
+
+    }
+    catch (err) {
+        res.status(400).send('Update Failed' + err.message);
+    }
+
 });
 
 connectDB().then((res) => {
