@@ -17,11 +17,13 @@ const userSchema = new mongoose.Schema({
         trim: true
     },
     password: {
-        type: String
+        type: String,
+        required: true
     },
     age: {
         type: Number,
-        min: 18
+        min: 18,
+        required: true
     },
     gender: {
         type: String,

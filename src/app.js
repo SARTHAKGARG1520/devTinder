@@ -62,6 +62,9 @@ app.post('/signup', async (req, res) => {
 app.patch('/user', async (req, res) => {
     const data = req.body;
     const id = data.userId;
+    if(data?.skills.length > 10){
+        throw new Error('Skills cannot be more than 10');
+    }
     try {
         const user = await User.findOneAndUpdate({ _id: id }, data, {
             returnDocument: "after",
