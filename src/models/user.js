@@ -15,8 +15,8 @@ const userSchema = new mongoose.Schema({
         unique: true,
         lowerCase: true,
         trim: true,
-        validate(value){
-            if(!validator.isEmail(value)){
+        validate(value) {
+            if (!validator.isEmail(value)) {
                 throw new Error('Email id is not proper');
             }
         }
@@ -24,8 +24,8 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        validate(value){
-            if(!validator.isStrongPassword(value)){
+        validate(value) {
+            if (!validator.isStrongPassword(value)) {
                 throw new Error('Password is not strong');
             }
         }
@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
     age: {
         type: Number,
         min: 18,
-        required: true
+        // required: true
     },
     gender: {
         type: String,
@@ -45,9 +45,9 @@ const userSchema = new mongoose.Schema({
     },
     photoUrl: {
         type: String,
-        default: "nfjdsn",
-        validate(value){
-            if(!validator.isURL(value)){
+        default: "https://unsplash.com/photos/a-bunch-of-balloons-that-are-shaped-like-email-7NT4EDSI5Ok",
+        validate(value) {
+            if (!validator?.isURL(value)) {
                 throw new Error('URL is not proper');
             }
         }

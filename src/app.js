@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const connectDB = require('./config/database');
 const User = require('./models/user');
+const { ValidateSignUp } = require('./utils/validations');
+const bcrypt = require('bcrypt');
 
 app.use(express.json());
 
@@ -49,20 +51,44 @@ app.get('/userByEmail', async (req, res) => {
 });
 
 app.post('/signup', async (req, res) => {
-    const data = new User(req.body);
     try {
+        ValidateSignUp(req);
+        const { firstName, lastName, emailId, password } = req.body;
+        const passwordHash = await bcrypt.hash(password, 10);
+        const data = new User({ firstName, lastName, emailId, password: passwordHash });
         await data.save();
         res.send('Data inserted');
     }
     catch (err) {
-        res.status(400).send('Error saving the user ' + err.message);
+        res.status(400).send('Error : ' + err.message);
     }
+});
+
+app.post('/login', async (req, res) => {
+    try {
+        const { emailId, password } = req.body;
+        const user = await User.findOne({ emailId: emailId });
+        if (!user) {
+            throw new Error("Invalid Credentials");
+        }
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (isPasswordValid) {
+            res.send("Login Successful");
+        }
+        else {
+            throw new Error("Invalid Credentials");
+        }
+    }
+    catch (error) {
+        res.status(400).send("Error : " + error.message);
+    }
+
 });
 
 app.patch('/user', async (req, res) => {
     const data = req.body;
     const id = data.userId;
-    if(data?.skills.length > 10){
+    if (data?.skills.length > 10) {
         throw new Error('Skills cannot be more than 10');
     }
     try {
