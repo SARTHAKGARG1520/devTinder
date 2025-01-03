@@ -4,51 +4,11 @@ const connectDB = require('./config/database');
 const User = require('./models/user');
 const { ValidateSignUp } = require('./utils/validations');
 const bcrypt = require('bcrypt');
-
+const cookieParser = require('cookie-parser');
+const { userAuth } = require('./middlewares/auth');
 app.use(express.json());
+app.use(cookieParser());
 
-app.get('/users', async (req, res) => {
-    try {
-        const users = await User.find({});
-        if (users.length === 0) {
-            res.status(404).send('Not found');
-        }
-        else {
-            res.send(users);
-        }
-    }
-    catch (err) {
-        res.status(500).send('Server error');
-    }
-});
-
-app.delete('/user', async (req, res) => {
-    const id = req.body.id;
-    try {
-        await User.findOneAndDelete({ _id: id });
-        res.send('Deleted successfully');
-    }
-    catch (err) {
-        res.status(500).send('unable to delete');
-    }
-
-});
-
-app.get('/userByEmail', async (req, res) => {
-    const userEmail = req.body.emailId;
-    try {
-        const user = await User.findOne({ emailId: userEmail });
-        if (!user) {
-            res.status(404).send('Not found');
-        }
-        else {
-            res.send(user);
-        }
-    }
-    catch (err) {
-        res.status(500).send('server error');
-    }
-});
 
 app.post('/signup', async (req, res) => {
     try {
@@ -68,11 +28,16 @@ app.post('/login', async (req, res) => {
     try {
         const { emailId, password } = req.body;
         const user = await User.findOne({ emailId: emailId });
+        console.log(user);
         if (!user) {
             throw new Error("Invalid Credentials");
         }
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await user.validatePassword(password);
         if (isPasswordValid) {
+            const token = await user.getJWT();
+            res.cookie("token", token, {
+                expires: new Date(Date.now() + 8 * 60 * 60 * 1000)
+            });
             res.send("Login Successful");
         }
         else {
@@ -85,25 +50,23 @@ app.post('/login', async (req, res) => {
 
 });
 
-app.patch('/user', async (req, res) => {
-    const data = req.body;
-    const id = data.userId;
-    if (data?.skills.length > 10) {
-        throw new Error('Skills cannot be more than 10');
-    }
+app.get('/profile', userAuth, async (req, res) => {
     try {
-        const user = await User.findOneAndUpdate({ _id: id }, data, {
-            returnDocument: "after",
-            runValidators: true
-        });
-        console.log(user);
-        res.send('Data updated');
-
+        const { user } = req;
+        res.send(user);
     }
     catch (err) {
-        res.status(400).send('Update Failed' + err.message);
+        res.status(400).send("Error : " + err.message);
     }
+});
 
+app.post('/sendConnectionRequest', userAuth, async (req, res) => {
+    try {
+        res.send('Connection Request Sent !!!')
+    }
+    catch (err) {
+        res.status(400).send('Error : ' + err.message);
+    }
 });
 
 connectDB().then((res) => {
