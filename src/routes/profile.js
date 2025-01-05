@@ -31,5 +31,23 @@ profileRouter.patch('/profile/edit', userAuth, async (req, res) => {
     }
 });
 
+profileRouter.patch('/profile/password', userAuth, async (req, res) => {
+    try {
+        if (!isEditAllowed) {
+            throw new Error('Edit not allowed');
+        }
+        else {
+            const user = req.user;
+            const passwordHash = await bcrypt.hash(password, 10);
+            user.password = passwordHash;
+            await user.save();
+            res.json({ message: `${user.firstName}, your password has been updated successfully` });
+        }
+    }
+    catch (err) {
+        res.status(400).send("Error : " + err.message);
+    }
+});
+
 
 module.exports = profileRouter;

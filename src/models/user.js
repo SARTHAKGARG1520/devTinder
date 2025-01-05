@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
         unique: true,
         lowerCase: true,
         trim: true,
+        unique: true,
         validate(value) {
             if (!validator.isEmail(value)) {
                 throw new Error('Email id is not proper');
@@ -64,7 +65,6 @@ const userSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
-
 
 userSchema.methods.getJWT = async function () {
     const user = this;
