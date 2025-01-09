@@ -6,7 +6,7 @@ const { validateEditProfile } = require('../utils/validations');
 profileRouter.get('/profile/view', userAuth, async (req, res) => {
     try {
         const { user } = req;
-        res.send(user);
+        res.json({user});
     }
     catch (err) {
         res.status(400).send("Error : " + err.message);
