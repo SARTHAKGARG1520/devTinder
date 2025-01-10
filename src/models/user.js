@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema({
     },
     photoUrl: {
         type: String,
-        default: "https://unsplash.com/photos/a-bunch-of-balloons-that-are-shaped-like-email-7NT4EDSI5Ok",
+        default: "https://static-00.iconduck.com/assets.00/profile-circle-icon-256x256-cm91gqm2.png",
         validate(value) {
             if (!validator?.isURL(value)) {
                 throw new Error('URL is not proper');
@@ -60,7 +60,7 @@ const userSchema = new mongoose.Schema({
         type: [String]
     },
     about: {
-        type: [String]
+        type: String
     }
 }, {
     timestamps: true
