@@ -3,6 +3,7 @@ const app = express();
 const connectDB = require('./config/database');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+require('dotenv').config();
 
 app.use(cors({
     origin: "http://localhost:5173",
@@ -23,8 +24,8 @@ app.use('/', userRouter);
 
 connectDB().then((res) => {
     console.log('DB Connected');
-    app.listen((3000), () => {
-        console.log('Server started');
+    app.listen((process.env.PORT), () => {
+        console.log('Server started on PORT '+ process.env.PORT );
     });
 })
     .catch((err) => {
