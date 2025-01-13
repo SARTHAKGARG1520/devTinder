@@ -47,6 +47,13 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
+    isPremium: {
+        type: Boolean,
+        default: false,
+    },
+    membershipType: {
+        type: String,
+    },
     photoUrl: {
         type: String,
         default: "https://static-00.iconduck.com/assets.00/profile-circle-icon-256x256-cm91gqm2.png",
